@@ -12,13 +12,13 @@ import lane_util as lane_util
 offset_topic = '/offset_visual'
 
 offset_value_topic = '/offset'
-vid_topic = '/frame'
+cam_topic = '/camera/rgb/image_rect_color'
 
 class Node(object):
     def __init__(self):
         # self.cam = cv2.VideoCapture(0)
         self.br = CvBridge()
-        self.vid_sub = rospy.Subscriber(vid_topic, Image, callback=self.img_callback, queue_size=10)
+        self.vid_sub = rospy.Subscriber(cam_topic, Image, callback=self.img_callback, queue_size=10)
         self.offset_sub = rospy.Subscriber(offset_value_topic, Float64, callback=self.offset_callback, queue_size=10)
         self.offset = 0
         
