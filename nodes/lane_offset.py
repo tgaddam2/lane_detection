@@ -10,7 +10,7 @@ import numpy as np
 import lane_util as lane_util
 
 offset_topic = '/offset'
-cam_topic = '/camera/rgb/image_rect_color' # /video for testing
+cam_topic = '/camera/rgb/image_rect_color' # # /frame for mp4
 
 class Node(object):
     def __init__(self):
@@ -35,11 +35,10 @@ class Node(object):
     def processImg(self):
         offset = lane_util.vid_pipeline_stripped(self.image)
         return offset
-        
-        
+                
             
 if __name__ == '__main__':
-    rospy.init_node("image_node", anonymous=True)
+    rospy.init_node("lane_offset", anonymous=True)
     my_node = Node()
     rospy.loginfo("initialized")
     rospy.spin()

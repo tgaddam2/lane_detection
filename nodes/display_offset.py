@@ -12,7 +12,7 @@ import lane_util as lane_util
 offset_topic = '/offset_visual'
 
 offset_value_topic = '/offset'
-cam_topic = '/camera/rgb/image_rect_color'
+cam_topic = '/camera/rgb/image_rect_color' # /frame for mp4
 
 class Node(object):
     def __init__(self):
@@ -49,6 +49,7 @@ class Node(object):
          
             
 if __name__ == '__main__':
-    rospy.init_node("image_node", anonymous=True)
+    rospy.init_node("display_offset", anonymous=True)
     my_node = Node()
+    rospy.loginfo("initialized")
     rospy.spin()

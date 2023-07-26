@@ -302,8 +302,6 @@ def vid_pipeline_stripped(img, scale_fac=250):
     
     return curverad[2]
 
-
-
 if __name__ == '__main__':
     undistort_img()
 

@@ -24,20 +24,18 @@ class Node():
             # image = self.br.imgmsg_to_cv2(image)
                                     
             if ret:
-                
                 if not self.got_first:
                     rospy.loginfo("GOT FIRST IMAGE" if not self.RESTARTED else "RESTARTING VIDEO")
                 self.got_first = True
                 # rospy.loginfo(type(image))
                 
                 self.pub.publish(self.br.cv2_to_imgmsg(image))
-                
             else:
                 self.load_cam()
                 self.RESTARTED = True
                 self.got_first = False
             
 if __name__ == '__main__':
-    rospy.init_node("image_node", anonymous=True)
+    rospy.init_node("mp4_pub", anonymous=True)
     my_node = Node()
     my_node.start()
