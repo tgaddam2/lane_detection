@@ -230,8 +230,8 @@ def get_curve(img, leftx, rightx):
     ploty = np.linspace(0, img.shape[0]-1, img.shape[0])
     y_eval = np.max(ploty)
     x_dim, y_dim = img.shape[:2]
-    ym_per_pix = 30.5/y_dim#720 # meters per pixel in y dimension
-    xm_per_pix = 3.7/y_dim#720 # meters per pixel in x dimension
+    ym_per_pix = 30.5/y_dim #720 # meters per pixel in y dimension
+    xm_per_pix = 3.7/y_dim #720 # meters per pixel in x dimension
 
     # Fit new polynomials to x,y in world space
     # print(len(ploty*ym_per_pix), len(leftx*xm_per_pix))
