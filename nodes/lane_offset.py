@@ -8,7 +8,6 @@ import os
 import numpy as np
 
 import lane_util as lane_util
-import simple_lane_util as simple_lane_util
 
 offset_topic = '/offset'
 cam_topic = '/camera/rgb/image_rect_color' # # /frame for mp4
@@ -34,8 +33,7 @@ class Node(object):
         
     
     def processImg(self):
-        offset = lane_util.vid_pipeline_stripped(self.image)
-        offset = simple_lane_util.offset_return(self.image)[0]
+        offset = lane_util.process_and_draw(self.image)
         return offset
                 
             

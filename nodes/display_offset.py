@@ -8,7 +8,6 @@ import os
 import numpy as np
 
 import lane_util as lane_util
-import simple_lane_util as simple_lane_util
 
 offset_topic = '/offset_visual'
 
@@ -47,8 +46,6 @@ class Node(object):
         self.image = cv2.circle(self.image, (center_x, center_y), 5, (0,0,255), -1)
         
         self.image = cv2.line(self.image, (center_x, center_y), (offset_x, center_y), (0,0,255), 3)
-        
-        self.image = simple_lane_util.offset_return(self.image)[0]
          
             
 if __name__ == '__main__':
