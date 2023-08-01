@@ -20,6 +20,7 @@ class Node(object):
         self.offset_pub = rospy.Publisher(offset_topic, Float64,queue_size=10)
     def callback(self, image):
         self.image = self.br.imgmsg_to_cv2(image)
+        
         # rospy.loginfo(self.image.shape)
         offset = self.processImg()
         # rospy.loginfo(offset)
@@ -33,7 +34,7 @@ class Node(object):
         
     
     def processImg(self):
-        offset = lane_util.process_and_draw(self.image)
+        offset = lane_util.process_and_draw(self.image)[0]
         return offset
                 
             
