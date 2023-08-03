@@ -24,17 +24,19 @@ class Node(object):
         
         offset, self.image = self.processImg()
         
-        if offset is None:
+        if offset is None or np.isnan(offset):
             return
         
+        offset *= -1
         height, width = self.image.shape[:2]
         
         center_x = width / 2
         center_y = height / 2
-        offset_x = center_x + int(center_x * offset)
+        offset_x = center_x + int(offset * 5)
         
         self.image = cv2.circle(self.image, (int(center_x), int(center_y)), 5, (255, 0, 0), -1)
-        self.image = cv2.line(self.image, (int(center_x), int(center_y)), (int(offset_x), int(center_y)), (255, 0, 0), 3)
+        self.image = cv2.circle(self.image, (int(center_x + offset), int(center_y + 25)), 5, (0, 255, 255), -1)
+        self.image = cv2.line(self.image, (int(center_x), int(center_y)), (int(offset_x), int(center_y)), (255, 0, 0), 2)
         
         self.vid_edited_pub.publish(self.br.cv2_to_imgmsg(self.image))
     

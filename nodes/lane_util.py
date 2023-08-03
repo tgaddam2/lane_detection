@@ -16,31 +16,53 @@ def process_and_draw(image, visualize=False, scale_fac=500):
     
     height, width = image.shape[:2]
     
-    cropped_image = image[int(height * 0.60):height, 10:width]
+    # cropped_image = image[int(height * 0.60):height, 10:width]
+    crop_multiplier = 0.70
+    cropped_image = image[int(height * crop_multiplier):height, 10:width]
     
     # converting to greyscale
-    gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
     # plt.imshow(gray, cmap='gray')
     # plt.show()
 
-    bilateral = cv2.bilateralFilter(gray, 20, 75, 75)
+    # bilateral = cv2.bilateralFilter(gray, 20, 75, 75)
+    bilateral = cv2.bilateralFilter(cropped_image, d=35, sigmaColor=250, sigmaSpace=50)
     # plt.imshow(bilateral, cmap='gray')
     # plt.show()
-
+    
+    # converting to grayscale
+    gray = cv2.cvtColor(bilateral, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
+    # plt.imshow(gray, cmap='gray')
+    
     # gaussian blur
-    blur = cv2.GaussianBlur(bilateral, (5, 5), 0)
+    # blur = cv2.GaussianBlur(gray, (5, 5), 0)
     # plt.imshow(blur, cmap='gray')
     # plt.show()
 
     # canny edge detection
-    edges = cv2.Canny(blur, 50, 100)
+    # edges = cv2.Canny(blur, 50, 100)
+    edges = cv2.Canny(gray, 50, 100)
     # plt.imshow(edges)
     # plt.show()
 
     # hough transform
-    lines = cv2.HoughLinesP(edges, rho=6, theta=np.pi/60, threshold=160, minLineLength=40, maxLineGap=25)
-    # print(lines)
+    lines_right = cv2.HoughLinesP(edges, rho=6, theta=np.pi/105, threshold=160, minLineLength=125, maxLineGap=10)
+    lines_left = cv2.HoughLinesP(edges, rho=6, theta=np.pi/75, threshold=160, minLineLength=125, maxLineGap=10)
     
+    if lines_right is None or lines_left is None:
+        return [None, None]
+    
+    if len(lines_right) == 0 or len(lines_left) == 0:
+        return [None, None]
+    
+    # [:, 0:int((width)//2)]
+    # [:, int((width)//2):width]
+    # print(f"left: {len(lines_left)}")
+    # print(f"right: {len(lines_right)}")
+    lines = np.concatenate((lines_left, lines_right))
+    # print(lines)
+    cropped_image = bilateral
     if visualize:
         # drawing lines
         line_image = np.zeros_like(cropped_image)
@@ -48,9 +70,14 @@ def process_and_draw(image, visualize=False, scale_fac=500):
         left_lines = []
         right_lines = []
 
+        left_x_coords = []
+        right_x_coords = []
+        
         x_coords = []
         y_coords = []
-
+    
+        # print(lines)
+        
         if lines is None:
             return [None, None]
         
@@ -70,31 +97,42 @@ def process_and_draw(image, visualize=False, scale_fac=500):
             right_color = (0, 0, 255)
             
             if x1 < (width / 2):
-                cv2.line(line_image, (x1, y1), (x2, y2), left_color, 5)
+                cv2.line(line_image, (x1, y1), (x2, y2), left_color, 1)
                 # print(f"left: {line}")
                 left_lines.append(line[0])
+                left_x_coords.append(x1)
+                left_x_coords.append(x2)
             else:
-                cv2.line(line_image, (x1, y1), (x2, y2), right_color, 5)
+                cv2.line(line_image, (x1, y1), (x2, y2), right_color, 1)
                 # print(f"right: {line}")
                 right_lines.append(line[0])
+                right_x_coords.append(x1)
+                right_x_coords.append(x2)
 
-        x_avg = np.average(x_coords)
+        # x_avg = np.average(x_coords)
+        # print(x_avg)
+        left_avg = np.average(left_x_coords)
+        right_avg = np.average(right_x_coords)        
+        x_avg = (left_avg + right_avg) / 2
+        # print(left_avg)
+        # print(right_avg)
+        # print(x_avg)
         y_avg = np.average(y_coords)
 
         center_x = width / 2
         center_y = height / 2
         offset = (width / 2) - x_avg
-        offset_x = center_x + int(center_x * offset)
+        # offset_x = center_x + int(center_x * offset)
 
-        cropped_image = cv2.circle(cropped_image, (int(center_x), int(center_y)), 5, (0, 0, 255), -1)
-        cropped_image = cv2.line(cropped_image, (int(center_x), int(center_y)), (int(offset_x), int(center_y)), (0,0,255), 3)
+        # cv2.circle(line_image, (int(center_x), int(center_y)), 5, (0, 0, 255), -1)
+        # cv2.line(line_image, (int(center_x), int(center_y)), (int(offset_x), int(center_y)), (0,0,255), 3)
         
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontColor = (0, 0, 0)
         fontSize = 1
-        cv2.putText(cropped_image, 'img center: {:.4f} px'.format(center_x), (int(center_x) - 200, 350), font, fontSize, fontColor, 4)
-        cv2.putText(cropped_image, 'lane center: {:.4f} px'.format(x_avg), (int(center_x) - 200, 400), font, fontSize, fontColor, 4)
-        cv2.putText(cropped_image, 'offset: {:.4f} px'.format(offset), (int(center_x) - 200, 450), font, fontSize, fontColor, 4)
+        cv2.putText(cropped_image, 'img center: {:.4f} px'.format(center_x), (int(center_x) - 200, 200), font, fontSize, fontColor, 4)
+        cv2.putText(cropped_image, 'lane center: {:.4f} px'.format(x_avg), (int(center_x) - 200, 250), font, fontSize, fontColor, 4)
+        cv2.putText(cropped_image, 'offset: {:.4f} px'.format(offset), (int(center_x) - 200, 300), font, fontSize, fontColor, 4)
 
         # overlyaing lane lines on original image
         final_image = cv2.addWeighted(cropped_image, 0.8, line_image, 1, 0)
@@ -103,10 +141,19 @@ def process_and_draw(image, visualize=False, scale_fac=500):
         # plt.imshow(final_image)
         # plt.show()
         
+        # cv2.circle(final_image, (int(center_x), int(center_y)), 5, (0, 0, 255), -1)
+        # cv2.line(final_image, (int(center_x), int(center_y)), (int(offset_x), int(center_y)), (0,0,255), 3)
+        
         # image = np.array(Image.open(image))
         image_copy = copy.deepcopy(image)
-        image_copy[int(height * 0.60):height, 10:width, :] = final_image[:, :, :]
+        image_copy[int(height * crop_multiplier):height, 10:width, :] = final_image[:, :, :]   
+        
+        # plt.imshow(image_copy)
+        # plt.show()
     else:
+        left_x_coords = []
+        right_x_coords = []
+        
         x_coords = []
         y_coords = []
         
@@ -119,9 +166,23 @@ def process_and_draw(image, visualize=False, scale_fac=500):
             x_coords.append(x1)
             x_coords.append(x2)
             y_coords.append(y1)
-            y_coords.append(y2)            
+            y_coords.append(y2)
+            
+            if x1 < (width / 2):
+                left_x_coords.append(x1)
+                left_x_coords.append(x2)
+            else:
+                right_x_coords.append(x1)
+                right_x_coords.append(x2)        
 
-        x_avg = np.average(x_coords)
+        # x_avg = np.average(x_coords)
+        # print(x_avg)
+        left_avg = np.average(left_x_coords)
+        right_avg = np.average(right_x_coords)        
+        x_avg = (left_avg + right_avg) / 2
+        # print(left_avg)
+        # print(right_avg)
+        # print(x_avg)
         y_avg = np.average(y_coords)
 
         center_x = width / 2
@@ -131,8 +192,39 @@ def process_and_draw(image, visualize=False, scale_fac=500):
         return [offset, image_copy]
     return [offset]
 
-# image = cv2.imread('test_images/5.png')
-# print(process_and_draw(image, visualize=True, scale_fac=500))
-
-# image = cv2.imread('test_images/5.png')
-# print(process_and_draw(image, visualize=True, scale_fac=500))
+if __name__ == '__main__':
+    image = cv2.imread('test_images/5.png')
+    offset, image = process_and_draw(image, visualize=True)
+    print(offset)
+    plt.imshow(image)
+    plt.show()
+    
+    image = cv2.imread('test_images/6.png')
+    offset, image = process_and_draw(image, visualize=True)
+    print(offset)
+    plt.imshow(image)
+    plt.show()
+    
+    image = cv2.imread('test_images/7.png')
+    offset, image = process_and_draw(image, visualize=True)
+    print(offset)
+    plt.imshow(image)
+    plt.show()
+    
+    image = cv2.imread('test_images/8.png')
+    offset, image = process_and_draw(image, visualize=True)
+    print(offset)
+    plt.imshow(image)
+    plt.show()
+    
+    image = cv2.imread('test_images/9.png')
+    offset, image = process_and_draw(image, visualize=True)
+    print(offset)
+    plt.imshow(image)
+    plt.show()
+    
+    image = cv2.imread('test_images/10.png')
+    offset, image = process_and_draw(image, visualize=True)
+    print(offset)
+    plt.imshow(image)
+    plt.show()

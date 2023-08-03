@@ -328,7 +328,7 @@ if __name__ == '__main__':
     ax2.imshow(dst)
     ax2.set_title('Undistorted Image', fontsize=30)
 
-    img = cv2.imread('test_images/test3.jpg')
+    img = cv2.imread('/home/tgaddam/catkin_ws/src/lane_detection/nodes/test_images/test3.jpg')
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     dst = pipeline(img)
     # dst = perspective_warp(dst, dst_size=(img.shape[1], img.shape[0]))
@@ -376,7 +376,17 @@ if __name__ == '__main__':
     right_curves, left_curves = [],[]
     from moviepy.editor import VideoFileClip
 
-    myclip = VideoFileClip('1_test2.mp4')#.subclip(40,43)
-    output_vid = 'output.mp4'
+    myclip = VideoFileClip('/home/tgaddam/catkin_ws/src/lane_detection/nodes/test_videos/project_video.mp4')#.subclip(40,43)
+    output_vid = 'project_output.mp4'
+    clip = myclip.fl_image(vid_pipeline)
+    clip.write_videofile(output_vid, audio=False)
+    
+    myclip = VideoFileClip('/home/tgaddam/catkin_ws/src/lane_detection/nodes/test_videos/challenge_video.mp4')#.subclip(40,43)
+    output_vid = 'challenge_output.mp4'
+    clip = myclip.fl_image(vid_pipeline)
+    clip.write_videofile(output_vid, audio=False)
+    
+    myclip = VideoFileClip('/home/tgaddam/catkin_ws/src/lane_detection/nodes/test_videos/harder_challenge_video.mp4')#.subclip(40,43)
+    output_vid = 'harder_challenge_output.mp4'
     clip = myclip.fl_image(vid_pipeline)
     clip.write_videofile(output_vid, audio=False)
