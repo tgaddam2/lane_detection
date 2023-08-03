@@ -25,7 +25,7 @@ class Node(object):
         offset = self.processImg()
         # rospy.loginfo(offset)
 
-        if offset is None:
+        if offset is None or np.isnan(offset):
             return
         # rospy.loginfo(offset)
         msg = Float64()

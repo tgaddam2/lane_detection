@@ -15,10 +15,14 @@ def process_and_draw(image, visualize=False, scale_fac=500):
     # image = resized_image
     
     height, width = image.shape[:2]
+    # plt.imshow(image)
+    # plt.show()
     
     # cropped_image = image[int(height * 0.60):height, 10:width]
     crop_multiplier = 0.70
     cropped_image = image[int(height * crop_multiplier):height, 10:width]
+    # plt.imshow(cropped_image)
+    # plt.show()
     
     # converting to greyscale
     # gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
@@ -32,8 +36,8 @@ def process_and_draw(image, visualize=False, scale_fac=500):
     
     # converting to grayscale
     gray = cv2.cvtColor(bilateral, cv2.COLOR_BGR2GRAY)
-    # gray = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
     # plt.imshow(gray, cmap='gray')
+    # plt.show()
     
     # gaussian blur
     # blur = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -96,14 +100,16 @@ def process_and_draw(image, visualize=False, scale_fac=500):
             left_color = (0, 255, 0)
             right_color = (0, 0, 255)
             
+            line_width = 3
+            
             if x1 < (width / 2):
-                cv2.line(line_image, (x1, y1), (x2, y2), left_color, 1)
+                cv2.line(line_image, (x1, y1), (x2, y2), left_color, line_width)
                 # print(f"left: {line}")
                 left_lines.append(line[0])
                 left_x_coords.append(x1)
                 left_x_coords.append(x2)
             else:
-                cv2.line(line_image, (x1, y1), (x2, y2), right_color, 1)
+                cv2.line(line_image, (x1, y1), (x2, y2), right_color, line_width)
                 # print(f"right: {line}")
                 right_lines.append(line[0])
                 right_x_coords.append(x1)
@@ -129,10 +135,10 @@ def process_and_draw(image, visualize=False, scale_fac=500):
         
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontColor = (0, 0, 0)
-        fontSize = 1
-        cv2.putText(cropped_image, 'img center: {:.4f} px'.format(center_x), (int(center_x) - 200, 200), font, fontSize, fontColor, 4)
-        cv2.putText(cropped_image, 'lane center: {:.4f} px'.format(x_avg), (int(center_x) - 200, 250), font, fontSize, fontColor, 4)
-        cv2.putText(cropped_image, 'offset: {:.4f} px'.format(offset), (int(center_x) - 200, 300), font, fontSize, fontColor, 4)
+        fontSize = 1.5
+        cv2.putText(cropped_image, 'img center: {:.4f} px'.format(center_x), (int(center_x) - 300, 200), font, fontSize, fontColor, 4)
+        cv2.putText(cropped_image, 'lane center: {:.4f} px'.format(x_avg), (int(center_x) - 300, 250), font, fontSize, fontColor, 4)
+        cv2.putText(cropped_image, 'offset: {:.4f} px'.format(offset), (int(center_x) - 300, 300), font, fontSize, fontColor, 4)
 
         # overlyaing lane lines on original image
         final_image = cv2.addWeighted(cropped_image, 0.8, line_image, 1, 0)
@@ -193,37 +199,47 @@ def process_and_draw(image, visualize=False, scale_fac=500):
     return [offset]
 
 if __name__ == '__main__':
-    image = cv2.imread('test_images/5.png')
-    offset, image = process_and_draw(image, visualize=True)
-    print(offset)
-    plt.imshow(image)
-    plt.show()
+    # image = cv2.imread('test_images/5.png')
+    # offset, image = process_and_draw(image, visualize=True)
+    # print(offset)image = cv2.imread('test_images/6.png')
+    # offset, image = process_and_draw(image, visualize=True)
+    # print(offset)
+    # plt.imshow(image)
+    # plt.show()
+    # plt.imshow(image)
+    # plt.show()
     
-    image = cv2.imread('test_images/6.png')
-    offset, image = process_and_draw(image, visualize=True)
-    print(offset)
-    plt.imshow(image)
-    plt.show()
+    # image = cv2.imread('test_images/6.png')
+    # offset, image = process_and_draw(image, visualize=True)
+    # print(offset)
+    # plt.imshow(image)
+    # plt.show()
     
-    image = cv2.imread('test_images/7.png')
-    offset, image = process_and_draw(image, visualize=True)
-    print(offset)
-    plt.imshow(image)
-    plt.show()
+    # image = cv2.imread('test_images/7.png')
+    # offset, image = process_and_draw(image, visualize=True)
+    # print(offset)
+    # plt.imshow(image)
+    # plt.show()
     
-    image = cv2.imread('test_images/8.png')
-    offset, image = process_and_draw(image, visualize=True)
-    print(offset)
-    plt.imshow(image)
-    plt.show()
+    # image = cv2.imread('test_images/8.png')
+    # offset, image = process_and_draw(image, visualize=True)
+    # print(offset)
+    # plt.imshow(image)
+    # plt.show()
     
-    image = cv2.imread('test_images/9.png')
-    offset, image = process_and_draw(image, visualize=True)
-    print(offset)
-    plt.imshow(image)
-    plt.show()
+    # image = cv2.imread('test_images/9.png')
+    # offset, image = process_and_draw(image, visualize=True)
+    # print(offset)
+    # plt.imshow(image)
+    # plt.show()
     
-    image = cv2.imread('test_images/10.png')
+    # image = cv2.imread('test_images/10.png')
+    # offset, image = process_and_draw(image, visualize=True)
+    # print(offset)
+    # plt.imshow(image)
+    # plt.show()
+    
+    image = cv2.imread('test_images/11.png')
     offset, image = process_and_draw(image, visualize=True)
     print(offset)
     plt.imshow(image)
